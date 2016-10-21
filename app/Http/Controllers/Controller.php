@@ -19,7 +19,6 @@
  */
 namespace App\Http\Controllers;
 
-// use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 // use Illuminate\Foundation\Auth\Access\AuthorizesResources;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Bus\DispatchesJobs;

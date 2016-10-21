@@ -121,41 +121,47 @@ Route::get('/wiki', ['as' => 'wiki', function () {
 Route::get('/help/support', ['as' => 'support', 'uses' => 'HelpController@getSupport']);
 Route::get('/help/faq', ['as' => 'faq', 'uses' => 'HelpController@getFaq']);
 
-// catchall controllers
-Route::controller('/notifications', 'NotificationController');
-Route::controller('/store', 'StoreController', [
-    'getListing' => 'store.products.index',
-    'getProduct' => 'store.product',
-    'putRequestNotification' => 'store.request-notification',
-]);
+Route::get('/store', 'StoreController@getIndex');
+Route::get('/store/listing', 'StoreController@getListing')->name('store.products.index');
+Route::get('/store/invoice', 'StoreController@getInvoice');
+Route::get('/store/invoice/{invoice}', 'StoreController@getInvoice');
+Route::get('/store/product/{product}', 'StoreController@getProduct')->name('store.product');
+Route::get('/store/cart', 'StoreController@getCart');
+Route::get('/store/checkout', 'StoreController@getCheckout');
+Route::post('/store/update-cart', 'StoreController@postUpdateCart');
+Route::post('/store/update-address', 'StoreController@postUpdateAddress');
+Route::post('/store/new-address', 'StoreController@postNewAddress');
+Route::post('/store/add-to-cart', 'StoreController@postAddToCart');
+Route::post('/store/checkout', 'StoreController@postCheckout');
+Route::put('/store/request-notification/{product}/{action}', 'StoreController@putRequestNotification')->name('store.request-notification');
 
 Route::resource('tournaments', 'TournamentsController');
 Route::post('/tournaments/{tournament}/unregister', ['as' => 'tournaments.unregister', 'uses' => 'TournamentsController@unregister']);
 Route::post('/tournaments/{tournament}/register', ['as' => 'tournaments.register', 'uses' => 'TournamentsController@register']);
 
 // Forum controllers
-Route::group(['prefix' => 'forum', 'namespace' => 'Forum'], function () {
-    Route::get('t/{topics}', ['as' => 'forum.topics.show', 'uses' => 'TopicsController@show']);
-    Route::post('topics/preview', ['as' => 'forum.topics.preview', 'uses' => 'TopicsController@preview']);
-    Route::post('topics/{topics}/lock', ['as' => 'forum.topics.lock', 'uses' => 'TopicsController@lock']);
-    Route::post('topics/{topics}/move', ['as' => 'forum.topics.move', 'uses' => 'TopicsController@move']);
-    Route::post('topics/{topics}/pin', ['as' => 'forum.topics.pin', 'uses' => 'TopicsController@pin']);
-    Route::post('topics/{topics}/reply', ['as' => 'forum.topics.reply', 'uses' => 'TopicsController@reply']);
-    Route::post('topics/{topics}/vote-feature', ['as' => 'forum.topics.vote-feature', 'uses' => 'TopicsController@voteFeature']);
-    Route::post('topics/{topics}/vote', ['as' => 'forum.topics.vote', 'uses' => 'TopicsController@vote']);
-    Route::post('topics/{topics}/watch', ['as' => 'forum.topics.watch', 'uses' => 'TopicsController@watch']);
+Route::group(['as' => 'forum.', 'prefix' => 'forum', 'namespace' => 'Forum'], function () {
+    Route::get('t/{topics}', ['as' => 'topics.show', 'uses' => 'TopicsController@show']);
+    Route::post('topics/preview', ['as' => 'topics.preview', 'uses' => 'TopicsController@preview']);
+    Route::post('topics/{topics}/lock', ['as' => 'topics.lock', 'uses' => 'TopicsController@lock']);
+    Route::post('topics/{topics}/move', ['as' => 'topics.move', 'uses' => 'TopicsController@move']);
+    Route::post('topics/{topics}/pin', ['as' => 'topics.pin', 'uses' => 'TopicsController@pin']);
+    Route::post('topics/{topics}/reply', ['as' => 'topics.reply', 'uses' => 'TopicsController@reply']);
+    Route::post('topics/{topics}/vote-feature', ['as' => 'topics.vote-feature', 'uses' => 'TopicsController@voteFeature']);
+    Route::post('topics/{topics}/vote', ['as' => 'topics.vote', 'uses' => 'TopicsController@vote']);
+    Route::post('topics/{topics}/watch', ['as' => 'topics.watch', 'uses' => 'TopicsController@watch']);
     Route::resource('topics', 'TopicsController', ['only' => ['create', 'store', 'update']]);
     Route::resource('topic-watches', 'TopicWatchesController', ['only' => ['index']]);
 
     Route::resource('forum-covers', 'ForumCoversController', ['only' => ['store', 'update', 'destroy']]);
     Route::resource('topic-covers', 'TopicCoversController', ['only' => ['store', 'update', 'destroy']]);
 
-    Route::get('p/{posts}', ['as' => 'forum.posts.show', 'uses' => 'PostsController@show']);
-    Route::get('posts/{posts}/raw', ['as' => 'forum.posts.raw', 'uses' => 'PostsController@raw']);
+    Route::get('p/{posts}', ['as' => 'posts.show', 'uses' => 'PostsController@show']);
+    Route::get('posts/{posts}/raw', ['as' => 'posts.raw', 'uses' => 'PostsController@raw']);
     Route::resource('posts', 'PostsController', ['only' => ['destroy', 'update', 'edit']]);
 
-    Route::get('/', ['as' => 'forum.forums.index', 'uses' => 'ForumsController@index']);
-    Route::get('{forums}', ['as' => 'forum.forums.show', 'uses' => 'ForumsController@show']);
+    Route::get('/', ['as' => 'forums.index', 'uses' => 'ForumsController@index']);
+    Route::get('{forums}', ['as' => 'forums.show', 'uses' => 'ForumsController@show']);
 });
 
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function () {
